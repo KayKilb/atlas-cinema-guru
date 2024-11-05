@@ -1,32 +1,35 @@
-import { fetchWatchLaters } from "@/lib/data";
-import { NextRequest, NextResponse } from "next/server";
+// Watch Later API
+// File: app/api/watch-later/route.ts
 import { auth } from "@/auth";
+import { fetchWatchLater } from "@/lib/data";
+import { NextRequest, NextResponse } from "next/server";
 
-/**
- * GET /api/titles
- */
 export const GET = auth(async (req: NextRequest) => {
   const params = req.nextUrl.searchParams;
-  const page = params.get("page") ? Number(params.get("page")) : 1;
-  const minYear = params.get("minYear") ? Number(params.get("minYear")) : 0;
-  const maxYear = params.get("maxYear")
-    ? Number(params.get("maxYear"))
-    : new Date().getFullYear();
-  const query = params.get("query") ?? "";
+  const page = parseInt(params.get("page") || "1", 10);
 
-  //@ts-ignore
-  if (!req.auth) {
+  if (isNaN(page) || page < 1) {
+    return NextResponse.json({ error: "Invalid page number" }, { status: 400 });
+  }
+
+  const auth = req.auth;
+  if (!auth) {
     return NextResponse.json(
       { error: "Unauthorized - Not logged in" },
       { status: 401 }
     );
   }
 
-  const {
-    user: { email }, //@ts-ignore
-  } = req.auth;
+  const { email } = auth.user;
 
-  const watchLater = await fetchWatchLaters(page, email);
-
-  return NextResponse.json({ watchLater });
+  try {
+    const watchLater = await fetchWatchLater(page, email);
+    return NextResponse.json({ watchLater });
+  } catch (error) {
+    console.error("Error fetching watch later list:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch watch later list" },
+      { status: 500 }
+    );
+  }
 });

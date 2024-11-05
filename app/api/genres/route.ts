@@ -1,3 +1,5 @@
+// File: app/api/seed/route.ts
+
 import { fetchGenres } from "@/lib/data";
 import { NextResponse } from "next/server";
 

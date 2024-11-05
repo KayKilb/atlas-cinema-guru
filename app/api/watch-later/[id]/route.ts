@@ -1,48 +1,68 @@
+// Add/Remove Watch Later
+// File: app/api/watch-later/[id]/route.ts
+import { auth } from "@/auth";
 import {
-  deleteWatchLater,
-  insertWatchLater,
   watchLaterExists,
+  insertWatchLater,
+  deleteWatchLater,
 } from "@/lib/data";
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/auth";
 
-export const GET = auth(
-  //@ts-ignore
+export const POST = auth(
   async (req: NextRequest, { params }: { params: { id: string } }) => {
     const { id } = params;
 
-    //@ts-ignore
-    if (!req.auth) {
+    const auth = req.auth;
+    if (!auth) {
       return NextResponse.json(
         { error: "Unauthorized - Not logged in" },
         { status: 401 }
       );
     }
 
-    const {
-      user: { email }, //@ts-ignore
-    } = req.auth;
+    const { email } = auth.user;
 
     const exists = await watchLaterExists(id, email);
     if (exists) {
       return NextResponse.json({ message: "Already added to Watch Later" });
     }
 
-    await insertWatchLater(id, email);
-    return NextResponse.json({ message: "Watch Later Added" });
+    try {
+      await insertWatchLater(id, email);
+      return NextResponse.json({ message: "Watch Later Added" });
+    } catch (error) {
+      console.error("Error adding to watch later:", error);
+      return NextResponse.json(
+        { error: "Failed to add to watch later" },
+        { status: 500 }
+      );
+    }
   }
 );
 
 export const DELETE = auth(
-  //@ts-ignore
   async (req: NextRequest, { params }: { params: { id: string } }) => {
     const { id } = params;
 
-    const {
-      user: { email }, //@ts-ignore
-    } = req.auth;
+    const auth = req.auth;
+    if (!auth) {
+      return NextResponse.json(
+        { error: "Unauthorized - Not logged in" },
+        { status: 401 }
+      );
+    }
 
-    await deleteWatchLater(id, email);
-    return NextResponse.json({ message: "Watch Later removed" });
+    const { email } = auth.user;
+
+    try {
+      await deleteWatchLater(id, email);
+      return NextResponse.json({ message: "Watch Later removed" });
+    } catch (error) {
+      console.error("Error removing from watch later:", error);
+      return NextResponse.json(
+        { error: "Failed to remove from watch later" },
+        { status: 500 }
+      );
+    }
   }
 );

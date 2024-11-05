@@ -1,30 +1,18 @@
+// Activities API
+// File: app/api/activities/route.ts
 import { auth } from "@/auth";
 import { fetchActivities } from "@/lib/data";
 import { NextRequest, NextResponse } from "next/server";
 
-/**
- * Type definition for the authentication object
- */
-interface Auth {
-  user: {
-    email: string;
-  };
-}
-
-/**
- * GET /api/activities
- */
 export const GET = auth(async (req: NextRequest) => {
   const params = req.nextUrl.searchParams;
   const page = parseInt(params.get("page") || "1", 10);
 
-  // Validate page parameter
   if (isNaN(page) || page < 1) {
     return NextResponse.json({ error: "Invalid page number" }, { status: 400 });
   }
 
-  // Check authentication
-  const auth = req.auth as Auth; // Type assertion to ensure proper type checking
+  const auth = req.auth;
   if (!auth) {
     return NextResponse.json(
       { error: "Unauthorized - Not logged in" },
@@ -35,7 +23,6 @@ export const GET = auth(async (req: NextRequest) => {
   const { email } = auth.user;
 
   try {
-    // Fetch user activities
     const activities = await fetchActivities(page, email);
     return NextResponse.json({ activities });
   } catch (error) {
