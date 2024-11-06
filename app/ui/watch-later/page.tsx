@@ -1,8 +1,8 @@
 // app/ui/watch-later/page.tsx
 
 import { useEffect, useState } from "react";
-import MovieCard from "@/ui/components/MovieCard";
-import Layout from "@/ui/components/Layout";
+import MovieCard from "../components/Moviecard";
+import Layout from "../components/Layout";
 import { fetchWatchLaters } from "@/lib/data";
 import { useSession } from "next-auth/react";
 

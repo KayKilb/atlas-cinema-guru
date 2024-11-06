@@ -1,3 +1,4 @@
+//app\layout.tsx
 import "@/app/global.css";
 import { Metadata } from "next";
 

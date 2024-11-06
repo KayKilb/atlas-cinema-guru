@@ -1,15 +1,25 @@
-import { withAuth } from "next-auth/middleware";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
 
-// Use withAuth to handle redirection to the login page for unauthenticated users
-export default withAuth({
-  pages: {
-    signIn: "/login", // Redirects to `/login` if user is not authenticated
-  },
-});
+// Define paths that should be protected
+export async function middleware(req: NextRequest) {
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-// Middleware configuration to avoid applying to certain paths
+  // If the token is missing, redirect to the login page
+  if (!token) {
+    const url = req.nextUrl.clone();
+    url.pathname = "/login";
+    return NextResponse.redirect(url);
+  }
+
+  // If the token exists, continue as normal
+  return NextResponse.next();
+}
+
+// Configuration to exclude certain paths from requiring authentication
 export const config = {
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|logo.png).*)", // Exclude public assets and API routes
+    "/((?!api|_next/static|_next/image|favicon.ico|logo.png).*)", // Protect all paths except public assets and API routes
   ],
 };

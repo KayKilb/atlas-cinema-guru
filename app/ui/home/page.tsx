@@ -1,8 +1,8 @@
 // app/ui/home/page.tsx
 
 import { useState, useEffect } from "react";
-import MovieCard from "@/ui/components/MovieCard";
-import Layout from "@/ui/components/Layout";
+import MovieCard from "../components/Moviecard";
+import Layout from "../components/Layout";
 import { fetchTitles } from "@/lib/data";
 
 export default function HomePage() {

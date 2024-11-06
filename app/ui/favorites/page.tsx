@@ -1,7 +1,7 @@
 // app/ui/favorites/page.tsx
 import { useEffect, useState } from "react";
-import MovieCard from "@/ui/components/MovieCard";
-import Layout from "@/ui/components/Layout";
+import MovieCard from "../components/Moviecard";
+import Layout from "../components/Layout";
 import { fetchFavorites } from "@/lib/data";
 import { useSession } from "next-auth/react";
 
