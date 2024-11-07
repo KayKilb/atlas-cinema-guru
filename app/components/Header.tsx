@@ -5,18 +5,7 @@
 import React from "react";
 import { signOut, useSession } from "next-auth/react";
 
-interface Session {
-  user?: {
-    email: string;
-  };
-}
-
-interface HeaderProps {
-  userEmail: string;
-  onLogout: () => void;
-}
-
-const Header: React.FC<HeaderProps> = ({ userEmail, onLogout }) => {
+const Header: React.FC = () => {
   const { data: session, status } = useSession();
 
   // Display loading state while session is being fetched
@@ -30,18 +19,8 @@ const Header: React.FC<HeaderProps> = ({ userEmail, onLogout }) => {
   }
 
   return (
-    <div
-      className="Header"
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "10px",
-        backgroundColor: "#54F4D0",
-        color: "white",
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+    <div className="flex items-center justify-between p-2.5 bg-[#54F4D0] text-white">
+      <div className="flex items-center gap-2">
         <svg
           width="39"
           height="39"
@@ -55,11 +34,11 @@ const Header: React.FC<HeaderProps> = ({ userEmail, onLogout }) => {
             strokeWidth="2"
           />
         </svg>
-        <h3 style={{ margin: 0, color: "#00003C" }}>Cinema Guru</h3>
+        <h3 className="m-0 text-[#00003C]">Cinema Guru</h3>
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-        <span style={{ color: "#00003C" }}>Welcome, {session.user.email}</span>
+      <div className="flex items-center gap-4">
+        <span className="text-[#00003C]">Welcome, {session.user.email}</span>
         {/* Logout SVG icon */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -74,14 +53,8 @@ const Header: React.FC<HeaderProps> = ({ userEmail, onLogout }) => {
           <path d="M10.476,21a1,1,0,0,1-1,1H3a1,1,0,0,1-1-1V3A1,1,0,0,1,3,2H9.476a1,1,0,0,1,1,1V8.333h2V3a3,3,0,0,0-3-3H3A3,3,0,0,0,0,3V21a3,3,0,0,0,3,3H9.476a3,3,0,0,0,3-3V15.667h-2Z" />
         </svg>
         <button
-          onClick={onLogout}
-          style={{
-            color: "#00003C",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-            padding: "0.5rem",
-          }}
+          onClick={() => signOut()}
+          className="text-[#00003C] border-none rounded cursor-pointer p-2"
         >
           Logout
         </button>
