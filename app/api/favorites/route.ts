@@ -1,16 +1,29 @@
 // Add/Remove Favorites
 // File: app/api/favorites/route.ts
-
 import { fetchFavorites } from "@/lib/data";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/auth";
 
-export const GET = async (req: Request) => {
-  const email = /* retrieve user email from session */;
+/**
+ * GET /api/favorites
+ */
+export const GET = auth(async (req: NextRequest) => {
+  const params = req.nextUrl.searchParams;
+  const page = params.get("page") ? Number(params.get("page")) : 1;
 
-  try {
-    const favorites = await fetchFavorites(email);
-    return NextResponse.json(favorites);
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch favorites" }, { status: 500 });
+  //@ts-ignore
+  if (!req.auth) {
+    return NextResponse.json(
+      { error: "Unauthorized - Not logged in" },
+      { status: 401 }
+    );
   }
-};
+
+  const {
+    user: { email }, //@ts-ignore
+  } = req.auth;
+
+  const favorites = await fetchFavorites(page, email);
+
+  return NextResponse.json({ favorites });
+});
