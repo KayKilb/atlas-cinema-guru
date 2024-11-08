@@ -24,15 +24,18 @@ export function NavigationProvider({ children }: { children: ReactNode }) {
   >("home");
 
   useEffect(() => {
-    const path = window.location.pathname;
-    if (path === "/favorites") {
-      setActiveSection("favorites");
-    } else if (path === "/watch-later") {
-      setActiveSection("watchLater");
-    } else {
-      setActiveSection("home");
+    // Ensure this only runs in the client
+    if (typeof window !== "undefined") {
+      const path = window.location.pathname;
+      if (path === "/favorites") {
+        setActiveSection("favorites");
+      } else if (path === "/watch-later") {
+        setActiveSection("watchLater");
+      } else {
+        setActiveSection("home");
+      }
     }
-  }, [window.location.pathname]);
+  }, []); // Remove `window.location.pathname` from the dependency array
 
   return (
     <NavigationContext.Provider value={{ activeSection, setActiveSection }}>

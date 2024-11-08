@@ -1,42 +1,42 @@
-// app/components/MovieList.tsx
+// app/components/MovieCard.tsx
 import React from "react";
-import MovieCard from "./MovieCard";
 
-interface MoviesListProps {
-  paginatedMovies: any[];
-  favorites: string[];
-  watchLater: string[];
+interface MovieCardProps {
+  movie: {
+    id: string;
+    title: string;
+    synopsis: string;
+    released: number;
+    genre: string;
+    favorited: boolean;
+    watchLater: boolean;
+    image: string;
+  };
   onFavoriteToggle: (id: string) => void;
   onWatchLaterToggle: (id: string) => void;
 }
 
-const MoviesList: React.FC<MoviesListProps> = ({
-  paginatedMovies,
-  favorites,
-  watchLater,
+const MovieCard: React.FC<MovieCardProps> = ({
+  movie,
   onFavoriteToggle,
   onWatchLaterToggle,
 }) => {
   return (
-    <div className="movies-list grid grid-cols-3 sm:grid-cols-2 md:grid-cols-3 gap-8 w-full px-4 pt-4">
-      {paginatedMovies.length > 0 ? (
-        paginatedMovies.map((movie) => (
-          <MovieCard
-            key={movie.id}
-            movie={{
-              ...movie,
-              favorited: favorites.includes(movie.id),
-              watchLater: watchLater.includes(movie.id),
-            }}
-            onFavoriteToggle={onFavoriteToggle}
-            onWatchLaterToggle={onWatchLaterToggle}
-          />
-        ))
-      ) : (
-        <p className="text-white">No movies found.</p>
-      )}
+    <div className="movie-card">
+      <img src={movie.image} alt={movie.title} />
+      <div className="movie-info">
+        <h3>{movie.title}</h3>
+        <p>{movie.synopsis}</p>
+        <p>{movie.released}</p>
+        <button onClick={() => onFavoriteToggle(movie.id)}>
+          {movie.favorited ? "★" : "☆"}
+        </button>
+        <button onClick={() => onWatchLaterToggle(movie.id)}>
+          {movie.watchLater ? "⏰" : "⏲"}
+        </button>
+      </div>
     </div>
   );
 };
 
-export default MoviesList;
+export default MovieCard;
