@@ -13,15 +13,17 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "sourceMap": true, // Ensure source maps are generated
+    "allowSyntheticDefaultImports": true, // For mixed module systems
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    },
     "plugins": [
       {
         "name": "next"
       }
-    ],
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./*"]
-    }
+    ]
   },
   "include": [
     "next-env.d.ts",
@@ -31,5 +33,10 @@
     "seed/users.ts",
     "scripts/seed.js"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    ".next", // Exclude build output folder
+    "**/*.test.ts", // Exclude test files if applicable
+    "**/*.test.tsx"
+  ]
 }

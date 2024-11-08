@@ -1,12 +1,12 @@
 // app/layout.tsx
 import { Metadata } from "next";
-import Header from "../app/components/Header";
-import Sidebar from "../app/components/SideBar";
+import Header from "./components/Header";
+import Sidebar from "./components/SideBar";
 import { SessionProvider } from "next-auth/react";
 import { NavigationProvider } from "./contexts/NavContext";
-import "@/app/global.css";
-import Home from "@/app/components/Home";
-import Favorites from "@/app/components/Favorites";
+import "./global.css";
+import Home from "./components/Home";
+import Favorites from "./components/Favorites";
 
 export const metadata: Metadata = {
   title: "Cinema Guru | Atlas School",
@@ -17,22 +17,24 @@ export default function RootLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: { slug: string[] };
+  params: { slug?: string[] };
 }) {
+  // Use a helper to determine active section
+  const activeSection = getActiveSection(params);
+
   return (
     <html lang="en">
-      <body className={`antialiased bg-lumi-navy text-white min-h-screen`}>
+      <body className="antialiased bg-lumi-navy text-white min-h-screen">
         <SessionProvider>
           <NavigationProvider>
             <Header />
             <div className="flex pt-[3.5rem]">
               <Sidebar />
               <main className="flex-1">
-                {/* Continues to render Home or Favorites */}
-                {getActiveSection(params) === "favorites" ? (
-                  <Favorites activeSection={getActiveSection(params)} />
+                {activeSection === "favorites" ? (
+                  <Favorites activeSection={activeSection} />
                 ) : (
-                  <Home activeSection={getActiveSection(params)} />
+                  <Home activeSection={activeSection} />
                 )}
                 {children}
               </main>
@@ -44,10 +46,7 @@ export default function RootLayout({
   );
 }
 
-// Helper function to extract active section from Ref header
-function getActiveSection(params: { slug: string[] }): string {
-  if (params.slug && params.slug.length > 0) {
-    return params.slug[0];
-  }
-  return "home";
+// Helper function to determine active section
+function getActiveSection(params: { slug?: string[] }): string {
+  return params.slug && params.slug.length > 0 ? params.slug[0] : "home";
 }
