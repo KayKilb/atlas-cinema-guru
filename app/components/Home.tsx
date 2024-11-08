@@ -22,8 +22,8 @@ interface Film {
 const Home: React.FC<HomeProps> = ({ activeSection }) => {
   const [films, setFilms] = useState<Film[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true); // Loading state
 
-  // Ensure type consistency for searchParams
   const [searchParams, setSearchParams] = useState<{
     query: string;
     minYear?: number;
@@ -35,7 +35,6 @@ const Home: React.FC<HomeProps> = ({ activeSection }) => {
   });
 
   const filmsPerPage = 6;
-
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
 
   const handleTitlesFetched = (titles: Film[]) => {
@@ -53,11 +52,12 @@ const Home: React.FC<HomeProps> = ({ activeSection }) => {
 
   const handleGenresSelected = (genres: string[]) => {
     setSelectedGenres(genres);
-    setCurrentPage(1); // Resets to page 1
+    setCurrentPage(1);
   };
 
   useEffect(() => {
     const fetchFilms = async () => {
+      setLoading(true); // Start loading
       try {
         const url = new URL("/api/titles", window.location.origin);
         url.searchParams.set("page", currentPage.toString());
@@ -77,9 +77,12 @@ const Home: React.FC<HomeProps> = ({ activeSection }) => {
           throw new Error(`API request failed with status ${response.status}`);
         }
         const data = await response.json();
-        setFilms(data.title);
+        console.log("Fetched films:", data); // Debugging line
+        setFilms(Array.isArray(data.title) ? data.title : []);
       } catch (error) {
         console.error("Error fetching films:", error);
+      } finally {
+        setLoading(false); // End loading
       }
     };
 
@@ -88,11 +91,14 @@ const Home: React.FC<HomeProps> = ({ activeSection }) => {
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
+  if (loading) {
+    return <div>Loading...</div>; // Display loading state
+  }
+
   return (
     <div>
       {activeSection === "home" && (
         <div className="flex justify-between mb-4">
-          {/* Pass handleSearch to SearchBar */}
           <SearchBar
             onTitlesFetched={handleTitlesFetched}
             onSearch={handleSearch}
@@ -100,7 +106,7 @@ const Home: React.FC<HomeProps> = ({ activeSection }) => {
           <Genre onGenresSelected={handleGenresSelected} />
         </div>
       )}
-      <div className="grid grid-cols-3 px-6 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 px-6 gap-4">
         {films.map((film) => (
           <MovieTile
             key={film.id}
