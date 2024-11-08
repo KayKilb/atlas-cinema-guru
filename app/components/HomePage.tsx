@@ -10,6 +10,7 @@ const HomePage: React.FC = () => {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [watchLater, setWatchLater] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalMovies, setTotalMovies] = useState(0); // To hold total movie count
   const moviesPerPage = 10;
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,20 +31,23 @@ const HomePage: React.FC = () => {
         if (minYear) queryParams.append("minYear", minYear.toString());
         if (maxYear) queryParams.append("maxYear", maxYear.toString());
         if (genres.length > 0) queryParams.append("genres", genres.join(","));
+        if (searchTerm) queryParams.append("search", searchTerm);
 
         const response = await fetch(`/api/titles?${queryParams.toString()}`);
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
-        setPaginatedMovies(data.title); // Assuming 'data.title' is the correct path
+
+        setPaginatedMovies(data.titles); // Assuming 'data.titles' is the correct path
+        setTotalMovies(data.total); // Assuming 'data.total' provides the total movie count
       } catch (error) {
         console.error("Failed to fetch movies:", error);
       }
     };
 
     fetchMovies();
-  }, [currentPage, moviesPerPage, minYear, maxYear, genres]); // Depend on the filter parameters
+  }, [currentPage, moviesPerPage, minYear, maxYear, genres, searchTerm]); // Depend on the filter parameters
 
   const toggleFavorite = (id: string) => {
     setFavorites((prev) =>
@@ -84,7 +88,8 @@ const HomePage: React.FC = () => {
         />
         <Pagination
           currentPage={currentPage}
-          totalMovies={100} // Adjust this if your API provides the total count
+          totalMovies={totalMovies} // Use dynamic total count from API
+          moviesPerPage={moviesPerPage} // Pass the number of movies per page
           onPageChange={handlePageChange}
         />
       </div>

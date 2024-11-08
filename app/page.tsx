@@ -29,8 +29,12 @@ const Page: React.FC = () => {
         }
         const data: Title[] = await response.json();
         setTitles(data);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("An unknown error occurred");
+        }
       } finally {
         setLoading(false);
       }
@@ -39,13 +43,17 @@ const Page: React.FC = () => {
     fetchTitles();
   }, []);
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   if (error) {
     return <div>Error: {error}</div>;
   }
 
   return (
     <div className="flex flex-col h-screen w-full">
-      <HomePage />
+      <HomePage titles={titles} />
     </div>
   );
 };
