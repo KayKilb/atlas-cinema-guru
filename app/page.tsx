@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import HomePage from "@/components/HomePage";
+import HomePage from "@/app/components/HomePage";
 
 interface Title {
   id: string;
