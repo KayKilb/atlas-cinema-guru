@@ -1,3 +1,80 @@
-@tailwind base;
-@tailwind components;
+@import "tailwindcss/preflight";
 @tailwind utilities;
+
+.header {
+  background-color: #54f4d0;
+}
+/* ********************************************* */
+/* *************** NAV /SIDEBAR **************** */
+/* ********************************************* */
+
+/* Sidebar initial collapsed state */
+.sidebar {
+  background-color: #1dd2af;
+  width: 6vw;
+  max-width: 100px;
+  transition: width 0.3s ease;
+  overflow: hidden;
+}
+/* Expanded sidebar */
+.sidebar.expanded {
+  width: 20vw;
+  max-width: 200px;
+}
+/* Sidebar expansion on hover */
+.sidebar:hover {
+  width: 20vw;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  cursor: pointer;
+}
+.nav-text {
+  display: inline;
+  transition: opacity 0.3s ease;
+}
+.sidebar.collapsed .nav-text {
+  opacity: 0;
+  pointer-events: none;
+}
+.nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* ********************************************* */
+  /* ************ END -- NAV /SIDEBAR ************ */
+  /* ********************************************* */
+
+  .movie-title {
+    /* Ensure title is styled to not overflow */
+    white-space: nowrap; /* Prevent text wrapping */
+    overflow: hidden; /* Hide overflow */
+    text-overflow: ellipsis; /* Show ellipsis for overflow */
+    position: absolute; /* Control positioning */
+    bottom: 0; /* Stick to bottom */
+    left: 0; /* Align to left */
+    right: 0; /* Align to right */
+    padding: 10px; /* Space around the text */
+  }
+
+  /* Tooltip Styles */
+  .tooltip {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    visibility: hidden; /* Initially hidden */
+    opacity: 0;
+    transition: visibility 0s, opacity 0.2s linear;
+    z-index: 10; /* Ensure tooltip appears above other content */
+  }
+
+  .movie-card:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+  }
+}
