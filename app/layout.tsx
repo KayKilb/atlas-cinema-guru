@@ -1,8 +1,8 @@
 import "@/app/global.css";
 import { Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
-import Header from "@/components/Header";
-import NavBar from "@/components/Navigation";
+import UserInfo from "@/components/UserInfo";
+import Navigation from "@/components/Navigation";
 
 export const metadata: Metadata = {
   title: "Cinema Guru | Atlas School",
@@ -15,15 +15,19 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
-      <body className="antialiased bg-[#00003c] text-white">
+      <body className="antialiased bg-[#00003c] text-white overflow-x-hidden">
         <SessionProvider>
-          <div className="layout">
+          <div className="layout min-h-screen flex flex-col">
             <header className="header">
-              <Header />
+              <UserInfo />
             </header>
-            <div className="flex">
-              <NavBar />
-              <main className="main-content w-full">{children}</main>
+            <div className="flex flex-grow">
+              <div className="flex-grow-y">
+                <Navigation />
+              </div>
+              <main className="main-content p-4 flex-grow overflow-auto">
+                {children}
+              </main>
             </div>
           </div>
         </SessionProvider>
