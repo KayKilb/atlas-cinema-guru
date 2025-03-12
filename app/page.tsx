@@ -15,7 +15,11 @@ interface Title {
   image: string;
 }
 
-const Page: React.FC = () => {
+interface PageProps {
+  titles: Title[];
+}
+
+export default function Page() {
   const [titles, setTitles] = useState<Title[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,14 +27,18 @@ const Page: React.FC = () => {
   useEffect(() => {
     const fetchTitles = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/titles");
+        const response = await fetch("/api/titles");
         if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+          throw new Error("Failed to fetch titles");
         }
-        const data: Title[] = await response.json();
-        setTitles(data);
-      } catch (err: any) {
-        setError(err.message);
+        const data = await response.json();
+        setTitles(data.title);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("An unknown error occurred");
+        }
       } finally {
         setLoading(false);
       }
@@ -39,15 +47,12 @@ const Page: React.FC = () => {
     fetchTitles();
   }, []);
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="flex flex-col h-screen w-full">
-      <HomePage />
+    <div className="flex items-center justify-center h-full">
+      <HomePage titles={titles} />
     </div>
   );
-};
-
-export default Page;
+}

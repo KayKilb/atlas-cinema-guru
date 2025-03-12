@@ -1,39 +1,40 @@
+"use client";
+
 import React from "react";
 import MovieCard from "./MovieCard";
 
-interface MoviesListProps {
-  paginatedMovies: any[]; // Ensure this matches the type of your movie objects
-  favorites: string[];
-  watchLater: string[];
-  onFavoriteToggle: (id: string) => void;
-  onWatchLaterToggle: (id: string) => void;
+interface Movie {
+  id: string;
+  title: string;
+  synopsis: string;
+  released: number;
+  genre: string;
+  image: string;
+  favorited: boolean;
+  watchLater: boolean;
 }
 
-const MoviesList: React.FC<MoviesListProps> = ({
-  paginatedMovies,
-  favorites,
-  watchLater,
-  onFavoriteToggle,
-  onWatchLaterToggle,
-}) => {
+interface MoviesListProps {
+  paginatedMovies: Movie[];
+}
+
+const MoviesList: React.FC<MoviesListProps> = ({ paginatedMovies }) => {
   return (
-    <div className="movies-list grid grid-cols-3 sm:grid-cols-2 md:grid-cols-3 gap-8 w-full px-4 pt-4">
-      {paginatedMovies.length > 0 ? (
-        paginatedMovies.map((movie) => (
-          <MovieCard
-            key={movie.id}
-            movie={{
-              ...movie,
-              favorited: favorites.includes(movie.id),
-              watchLater: watchLater.includes(movie.id),
-            }}
-            onFavoriteToggle={onFavoriteToggle}
-            onWatchLaterToggle={onWatchLaterToggle}
-          />
-        ))
-      ) : (
-        <p className="text-white">No movies found.</p>
-      )}
+    <div className="grid grid-cols-3 gap-8 w-full px-4 pt-4">
+      {paginatedMovies.map((movie) => (
+        <MovieCard
+          key={movie.id}
+          movie={{
+            ...movie,
+          }}
+          onFavoriteToggle={function (id: string): void {
+            throw new Error("Function not implemented.");
+          }}
+          onWatchLaterToggle={function (id: string): void {
+            throw new Error("Function not implemented.");
+          }}
+        />
+      ))}
     </div>
   );
 };

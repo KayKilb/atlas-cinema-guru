@@ -6,6 +6,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@prisma/client": "^6.5.0",
     "@tailwindcss/forms": "0.5.10",
     "@tailwindcss/postcss": "^4.0.9",
     "@types/bcryptjs": "2.4.6",
@@ -28,6 +29,7 @@
     "@types/node": "22.13.8",
     "@types/react": "npm:types-react@19.0.0-rc.1",
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
+    "prisma": "^6.5.0",
     "typescript": "5.8.2"
   },
   "overrides": {

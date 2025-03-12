@@ -1,48 +1,32 @@
+"use client";
+
 import React from "react";
 
 interface PaginationProps {
-  currentPage: number;
-  totalMovies: number;
-  onPageChange: (page: number) => void;
+  page: number;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const Pagination: React.FC<PaginationProps> = ({
-  currentPage,
-  totalMovies,
-  onPageChange,
-}) => {
-  const moviesPerPage = 10;
-  const totalPages = Math.ceil(totalMovies / moviesPerPage);
+const Pagination: React.FC<PaginationProps> = ({ page, setPage }) => {
+  const prev = page > 1 ? page - 1 : 1;
 
   return (
     <div className="pagination flex flex-col items-center mt-4 p-6">
-      <div className="flex space-x-4">
+      <div className="relative inline-flex space-x-1">
         <button
-          onClick={() => onPageChange(Math.max(currentPage - 1, 1))}
-          disabled={currentPage === 1}
-          className={`flex-1 px-4 py-2 rounded-l-full ${
-            currentPage === 1
-              ? "bg-[#00003C] text-white"
-              : "bg-[#54F4D0] text-[#00003C]"
-          } disabled:opacity-50 hover:bg-[#54F4D0] hover:text-[#00003C]`}
+          onClick={() => setPage(Math.max(prev - 1, 1))}
+          disabled={page === 1}
+          className="w-28 px-6 py-3 bg-[#1ED2AF] font-inter text-[#00003c] rounded-l-full disabled:opacity-50"
         >
           Previous
         </button>
         <button
-          onClick={() => onPageChange(currentPage + 1)}
-          disabled={currentPage * moviesPerPage >= totalMovies}
-          className={`flex-1 px-4 py-2 rounded-r-full ${
-            currentPage * moviesPerPage >= totalMovies
-              ? "bg-[#00003C] text-white"
-              : "bg-[#54F4D0] text-[#00003C]"
-          } disabled:opacity-50 hover:bg-[#54F4D0] hover:text-[#00003C]`}
+          onClick={() => setPage((prev) => prev + 1)}
+          className="w-28 px-6 py-3 bg-[#1ED2AF] font-inter text-[#00003c] rounded-l-none rounded-r-full"
         >
           Next
         </button>
       </div>
-      <span className="text-white">
-        Page {currentPage} of {totalPages}
-      </span>
     </div>
   );
 };

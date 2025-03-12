@@ -2,7 +2,7 @@ import "@/app/global.css";
 import { Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
 import Header from "@/components/Header";
-import NavBar from "@/components/NavBar";
+import NavBar from "@/components/Navigation";
 
 export const metadata: Metadata = {
   title: "Cinema Guru | Atlas School",
