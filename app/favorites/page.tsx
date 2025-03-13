@@ -1,51 +1,79 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-
+import { useEffect, useState } from "react";
+import MoviesList from "@/components/MoviesList";
 import Pagination from "@/components/Pagination";
-import MovieCard from "@/components/MovieCard";
 
-interface Movie {
-  id: number;
-  title: string;
-  synopsis: string;
-  released: string;
-  genre: string;
-}
-
-const Favorites: React.FC = () => {
-  const [favorites, setFavorites] = useState<Movie[]>([]);
-  const [page, setPage] = useState<number>(1);
+const Favorites = () => {
+  const [favorites, setFavorites] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const moviesPerPage = 10;
 
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
-        const response = await fetch(`/api/favorites?page=${page}`);
+        const response = await fetch(
+          `/api/favorites?page=${currentPage}&limit=${moviesPerPage}`
+        );
         if (!response.ok) {
-          throw new Error(`Error! Status: ${response.status}`);
+          throw new Error(`Error ${response.status}: ${response.statusText}`);
         }
         const data = await response.json();
-        setFavorites(data.favorites);
+        setFavorites(data.favorites || []);
       } catch (error) {
-        console.error("Error fetching favorites:", error);
+        console.error("Failed to fetch favorites:", error);
       }
     };
+
     fetchFavorites();
-  }, [page]);
+  }, [currentPage]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleToggleFavorite = async (id: string, favorited: boolean) => {
+    try {
+      if (favorited) {
+        const response = await fetch(`/api/favorites`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id }),
+        });
+        if (response.ok) {
+          const newFavorite = await response.json();
+          setFavorites((prevFavorites) => [...prevFavorites, newFavorite]);
+        }
+      } else {
+        await fetch(`/api/favorites/${id}`, { method: "DELETE" });
+        setFavorites((prevFavorites) =>
+          prevFavorites.filter((movie) => movie.id !== id)
+        );
+      }
+    } catch (error) {
+      console.error("Failed to toggle favorite:", error);
+    }
+  };
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-4xl font-bold text-center mb-6 font-inter">
-        Favorites
-      </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 m-8">
-        {favorites.map((movie) => (
-          <div className="flex justify-center" key={movie.id}>
-            <MovieCard movie={movie} />
-          </div>
-        ))}
+    <div className="favorites-page-container min-h-screen text-white py-8 px-4">
+      <h1 className="text-4xl font-bold text-center mb-8">Favorites</h1>
+
+      <MoviesList
+        paginatedMovies={favorites}
+        favorites={favorites.map((movie) => movie.id)}
+        watchLater={[]}
+        onFavoriteToggle={handleToggleFavorite}
+        onWatchLaterToggle={() => {}}
+      />
+
+      <div className="pagination-controls flex justify-center mt-8 space-x-4">
+        <Pagination
+          currentPage={currentPage}
+          totalMovies={favorites.length}
+          onPageChange={handlePageChange}
+        />
       </div>
-      <Pagination page={page} setPage={setPage} />
     </div>
   );
 };

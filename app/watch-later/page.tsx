@@ -1,49 +1,83 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import MoviesList from "@/components/MoviesList";
 import Pagination from "@/components/Pagination";
-import MovieCard from "@/components/MovieCard";
 
-interface Movie {
-  id: number;
-  title: string;
-  synopsis: string;
-  released: string;
-  genre: string;
-}
-const WatchLater: React.FC = () => {
-  const [watchLaterMovies, setWatchLaterMovies] = useState<Movie[]>([]);
-  const [page, setPage] = useState<number>(1);
+const WatchLater = () => {
+  const [watchLaterMovies, setWatchLaterMovies] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const moviesPerPage = 10;
 
   useEffect(() => {
     const fetchWatchLaterMovies = async () => {
       try {
-        const response = await fetch(`/api/watch-later?page=${page}`);
+        const response = await fetch(
+          `/api/watch-later?page=${currentPage}&limit=${moviesPerPage}`
+        );
         if (!response.ok) {
-          throw new Error(`Error! Status: ${response.status}`);
+          throw new Error(`Error ${response.status}: ${response.statusText}`);
         }
         const data = await response.json();
-        setWatchLaterMovies(data.watchLater);
+        setWatchLaterMovies(data.watchLater || []);
       } catch (error) {
-        console.error("Error fetching watch later movies:", error);
+        console.error("Failed to fetch watch later movies:", error);
       }
     };
+
     fetchWatchLaterMovies();
-  }, [page]);
+  }, [currentPage]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleToggleWatchLater = async (id: string) => {
+    try {
+      setWatchLaterMovies((prevMovies) => {
+        const movieExists = prevMovies.some((movie) => movie.id === id);
+        if (movieExists) {
+          // Remove the movie from watch later
+          return prevMovies.filter((movie) => movie.id !== id);
+        } else {
+          // Add the movie to watch later
+          return [
+            ...prevMovies,
+            { id }, // This assumes the movie object only needs the `id` for now
+          ];
+        }
+      });
+
+      // Call API to handle the toggling on the server side
+      await fetch(`/api/watch-later/${id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+    } catch (error) {
+      console.error("Failed to toggle watch later:", error);
+    }
+  };
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-4xl font-bold text-center mb-6 font-inter">
-        Watch Later
-      </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 m-8">
-        {watchLaterMovies.map((movie) => (
-          <div className="flex justify-center" key={movie.id}>
-            <MovieCard movie={movie} />
-          </div>
-        ))}
+    <div className="watch-later-page-container min-h-screen text-white py-8 px-4">
+      <h1 className="text-4xl font-bold text-center mb-8">Watch Later</h1>
+
+      <MoviesList
+        paginatedMovies={watchLaterMovies}
+        favorites={[]}
+        watchLater={watchLaterMovies.map((movie) => movie.id)}
+        onFavoriteToggle={() => {}}
+        onWatchLaterToggle={handleToggleWatchLater} // Pass handler here
+      />
+
+      <div className="pagination-controls flex justify-center mt-8 space-x-4">
+        <Pagination
+          currentPage={currentPage}
+          totalMovies={watchLaterMovies.length}
+          onPageChange={handlePageChange}
+        />
       </div>
-      <Pagination page={page} setPage={setPage} />
     </div>
   );
 };
