@@ -1,5 +1,6 @@
 /* app/globals.css */
-@import "tailwindcss";
+@import "tailwindcss/preflight";
+@tailwind utilities;
 
 @theme {
   --font-display: "Poppins", "sans-serif";
