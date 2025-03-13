@@ -1,5 +1,4 @@
 //auth.ts
-import { fetchUser } from "./lib/data";
 import NextAuth from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 import Credentials from "next-auth/providers/credentials";
