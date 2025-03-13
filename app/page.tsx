@@ -1,4 +1,4 @@
-// app/api/page.tsx
+// app/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -15,11 +15,7 @@ interface Title {
   image: string;
 }
 
-interface PageProps {
-  titles: Title[];
-}
-
-export default function Page() {
+const Page: React.FC = () => {
   const [titles, setTitles] = useState<Title[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -27,18 +23,14 @@ export default function Page() {
   useEffect(() => {
     const fetchTitles = async () => {
       try {
-        const response = await fetch("/api/titles");
+        const response = await fetch("http://localhost:3000/api/titles");
         if (!response.ok) {
-          throw new Error("Failed to fetch titles");
+          throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        const data = await response.json();
-        setTitles(data.title);
-      } catch (err: unknown) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("An unknown error occurred");
-        }
+        const data: Title[] = await response.json();
+        setTitles(data);
+      } catch (err: any) {
+        setError(err.message);
       } finally {
         setLoading(false);
       }
@@ -47,12 +39,15 @@ export default function Page() {
     fetchTitles();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
-    <div className="flex items-center justify-center h-full">
-      <HomePage titles={titles} />
+    <div className="flex flex-col h-screen w-full">
+      <HomePage />
     </div>
   );
-}
+};
+
+export default Page;
