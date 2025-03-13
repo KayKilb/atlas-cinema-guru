@@ -1,5 +1,5 @@
 /* app/globals.css */
-@import "tailwindcss/preflight";
+@import "tailwindcss";
 @tailwind utilities;
 
 @theme {
