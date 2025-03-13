@@ -1,3 +1,4 @@
+// components/HomePage.tsx
 import React, { useState, useEffect } from "react";
 import Filters from "./Filters";
 import MoviesList from "./MoviesList";

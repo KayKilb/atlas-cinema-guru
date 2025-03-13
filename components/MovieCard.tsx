@@ -1,3 +1,4 @@
+// components/MovieCard.tsx
 import { useState } from "react";
 
 interface MovieCardProps {
