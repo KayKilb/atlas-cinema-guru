@@ -4,26 +4,15 @@
 import React from "react";
 import { signOut, useSession } from "next-auth/react";
 
-interface Session {
-  user?: {
-    email: string;
-  };
-}
-
-interface HeaderProps {
-  userEmail: string;
-  onLogout: () => void;
-}
-
-const Header: React.FC<HeaderProps> = ({ userEmail, onLogout }) => {
+const Header: React.FC = () => {
   const { data: session, status } = useSession();
 
-  // Display loading state while session is being fetched
+  // Display a loading state while the session is being fetched
   if (status === "loading") {
     return <div>Loading...</div>;
   }
 
-  // Check if the session exists and has a user
+  // If the user is not logged in, show a prompt
   if (!session || !session.user) {
     return <div>Please log in.</div>;
   }
@@ -73,7 +62,7 @@ const Header: React.FC<HeaderProps> = ({ userEmail, onLogout }) => {
           <path d="M10.476,21a1,1,0,0,1-1,1H3a1,1,0,0,1-1-1V3A1,1,0,0,1,3,2H9.476a1,1,0,0,1,1,1V8.333h2V3a3,3,0,0,0-3-3H3A3,3,0,0,0,0,3V21a3,3,0,0,0,3,3H9.476a3,3,0,0,0,3-3V15.667h-2Z" />
         </svg>
         <button
-          onClick={onLogout}
+          onClick={() => signOut()}
           style={{
             color: "#00003C",
             border: "none",
