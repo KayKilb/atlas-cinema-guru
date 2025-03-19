@@ -83,7 +83,7 @@ const Filters: React.FC<FiltersProps> = ({
 
       {/* Right side: Genres */}
       <div className="flex flex-col items-start lg:items-end w-full lg:w-1/4">
-        <label className="text-white font-semibold text-lg mb-2 self-start">
+        <label className="text-white font-semibold text-md mb-2 self-start">
           Genres
         </label>
         <div className="flex flex-wrap gap-2">
