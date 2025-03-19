@@ -18,16 +18,16 @@ const HomePage: React.FC = () => {
   const [maxYear, setMaxYear] = useState<number | undefined>(undefined);
   const [genres, setGenres] = useState<string[]>([]);
   const allGenres = [
-    "Thriller",
+    "Romance",
+    "Horror",
     "Drama",
-    "Sci-Fi",
+    "Action",
     "Mystery",
     "Fantasy",
-    "Romance",
-    "Action",
-    "Horror",
-    "Adventure",
+    "Thriller",
     "Western",
+    "Sci-Fi",
+    "Adventure",
   ];
 
   useEffect(() => {

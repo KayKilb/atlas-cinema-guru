@@ -1,5 +1,5 @@
 // components/Filters.tsx
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 interface FiltersProps {
   searchTerm: string;
@@ -10,7 +10,7 @@ interface FiltersProps {
   setMaxYear: (year: number | undefined) => void;
   genres: string[];
   setGenres: (genres: string[]) => void;
-  allGenres: string[]; // List of all genres provided from HomePage
+  allGenres: string[];
 }
 
 const Filters: React.FC<FiltersProps> = ({
@@ -24,24 +24,31 @@ const Filters: React.FC<FiltersProps> = ({
   setGenres,
   allGenres,
 }) => {
+  // Local state to capture input before submitting with Enter
+  const [localSearch, setLocalSearch] = useState(searchTerm);
+
+  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSearchTerm(localSearch);
+  };
+
   return (
-    <div className="p-6 flex flex-col lg:flex-row lg:justify-between lg:space-x-8 lg:space-y-0 space-y-6 w-full">
+    <div className="flex flex-col lg:flex-row w-full md:justify-between lg:space-x-8 p-6">
       {/* Left side: Search and Year Range */}
-      <div className="flex flex-col space-y-6 w-full lg:w-1/2">
-        {/* Search */}
-        <div className="flex flex-col">
-          <label className="text-white font-semibold mb-2">
-            Search by Title
-          </label>
+      <div className="flex flex-col justify-start w-full lg:w-1/4 space-y-4">
+        {/* Search input wrapped in a form */}
+        <form onSubmit={handleSearchSubmit} className="w-full">
+          <label className="text-white font-semibold mb-2 block">Search</label>
           <input
             type="text"
-            placeholder="e.g. Inception"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search Movies..."
+            value={localSearch}
+            onChange={(e) => setLocalSearch(e.target.value)}
             className="p-2 border border-[#54F4D0] bg-[#00003C] text-white rounded-full w-full focus:outline-none focus:ring-0"
           />
-        </div>
-        {/* Year Range */}
+        </form>
+
+        {/* Min/Max Year inputs */}
         <div className="flex space-x-4">
           <div className="flex flex-col w-1/2">
             <label className="text-white font-semibold mb-2">Min Year</label>
@@ -73,10 +80,13 @@ const Filters: React.FC<FiltersProps> = ({
           </div>
         </div>
       </div>
+
       {/* Right side: Genres */}
-      <div className="flex flex-col items-start lg:items-end w-full lg:w-1/2">
-        <label className="text-white font-semibold text-lg mb-3">Genres</label>
-        <div className="flex flex-wrap gap-3">
+      <div className="flex flex-col items-start lg:items-end w-full lg:w-1/4">
+        <label className="text-white font-semibold text-lg mb-2 self-start">
+          Genres
+        </label>
+        <div className="flex flex-wrap gap-2">
           {allGenres.map((genre) => {
             const isActive = genres.includes(genre);
             return (
@@ -88,12 +98,12 @@ const Filters: React.FC<FiltersProps> = ({
                     : [...genres, genre];
                   setGenres(newGenres);
                 }}
-                className={`px-3 py-1 rounded-full focus:outline-none border border-[#54F4D0] transition-colors
-                  ${
-                    isActive
-                      ? "bg-[#54F4D0] text-[#00003C]"
-                      : "bg-[#00003C] text-white"
-                  }`}
+                className={`px-2 py-1 text-sm rounded-full border border-[#54F4D0] focus:outline-none transition-colors
+            ${
+              isActive
+                ? "bg-[#54F4D0] text-[#00003C]"
+                : "bg-[#00003C] text-white"
+            }`}
               >
                 {genre}
               </button>
