@@ -38,7 +38,7 @@ const Filters: React.FC<FiltersProps> = ({
       <div className="flex flex-col justify-start w-full lg:w-1/4 space-y-4">
         {/* Search input wrapped in a form */}
         <form onSubmit={handleSearchSubmit} className="w-full">
-          <label className="text-white font-semibold mb-2 block">Search</label>
+          <label className="text-white font-thin mb-2 block">Search</label>
           <input
             type="text"
             placeholder="Search Movies..."
@@ -51,10 +51,10 @@ const Filters: React.FC<FiltersProps> = ({
         {/* Min/Max Year inputs */}
         <div className="flex space-x-4">
           <div className="flex flex-col w-1/2">
-            <label className="text-white font-semibold mb-2">Min Year</label>
+            <label className="text-white font-thin mb-2">Min Year</label>
             <input
               type="number"
-              placeholder="1950"
+              placeholder="1990"
               value={minYear || ""}
               onChange={(e) =>
                 setMinYear(
@@ -65,7 +65,7 @@ const Filters: React.FC<FiltersProps> = ({
             />
           </div>
           <div className="flex flex-col w-1/2">
-            <label className="text-white font-semibold mb-2">Max Year</label>
+            <label className="text-white font-thin mb-2">Max Year</label>
             <input
               type="number"
               placeholder="2024"
@@ -83,7 +83,7 @@ const Filters: React.FC<FiltersProps> = ({
 
       {/* Right side: Genres */}
       <div className="flex flex-col items-start lg:items-end w-full lg:w-1/4">
-        <label className="text-white font-semibold text-md mb-2 self-start">
+        <label className="text-white font-thin text-md mb-2 self-start">
           Genres
         </label>
         <div className="flex flex-wrap gap-2">
@@ -98,7 +98,7 @@ const Filters: React.FC<FiltersProps> = ({
                     : [...genres, genre];
                   setGenres(newGenres);
                 }}
-                className={`px-2 py-1 text-sm rounded-full border border-[#54F4D0] focus:outline-none transition-colors
+                className={`px-2 py-1 text-md font-thin rounded-full border border-[#54F4D0] focus:outline-none transition-colors
             ${
               isActive
                 ? "bg-[#54F4D0] text-[#00003C]"
