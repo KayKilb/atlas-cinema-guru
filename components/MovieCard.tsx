@@ -1,22 +1,31 @@
 // components/MovieCard.tsx
+"use client";
+
 import { useState } from "react";
+import Image from "next/image";
+
+interface Movie {
+  id: string;
+  title: string;
+  synopsis: string;
+  released: number;
+  genre: string;
+  favorited: boolean;
+  watchLater: boolean;
+  image: string;
+}
 
 interface MovieCardProps {
-  movie: {
-    id: string;
-    title: string;
-    synopsis: string;
-    released: number;
-    genre: string;
-    favorited: boolean;
-    watchLater: boolean;
-    image: string;
-  };
+  movie: Movie;
+  onFavoriteToggle: (id: string) => void;
   onWatchLaterToggle: (id: string) => void;
 }
 
-const MovieCard = ({ movie, onWatchLaterToggle }: MovieCardProps) => {
-  const [isHovered, setIsHovered] = useState(false);
+const MovieCard: React.FC<MovieCardProps> = ({
+  movie,
+  onFavoriteToggle,
+  onWatchLaterToggle,
+}) => {
   const [isFavorited, setIsFavorited] = useState(movie.favorited);
   const [isWatchLater, setIsWatchLater] = useState(movie.watchLater);
 
@@ -33,6 +42,7 @@ const MovieCard = ({ movie, onWatchLaterToggle }: MovieCardProps) => {
         });
       }
       setIsFavorited(!isFavorited);
+      onFavoriteToggle(movie.id);
     } catch (error) {
       console.error("Failed to toggle favorite:", error);
     }
@@ -52,7 +62,7 @@ const MovieCard = ({ movie, onWatchLaterToggle }: MovieCardProps) => {
         });
       }
       setIsWatchLater(!isWatchLater);
-      onWatchLaterToggle(movie.id); // Notify parent component of the change
+      onWatchLaterToggle(movie.id);
     } catch (error) {
       console.error("Failed to toggle watch later:", error);
     }
@@ -60,31 +70,59 @@ const MovieCard = ({ movie, onWatchLaterToggle }: MovieCardProps) => {
 
   return (
     <div
-      className="relative overflow-hidden transition-transform transform hover:scale-105 rounded-lg border-2 border-[#54F4D0]"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className="group relative bg-[#54F4D0] rounded-lg overflow-hidden shadow-md transition-transform hover:scale-105"
+      style={{ width: "250px" }} // Was 250. Adjust width to your preference
     >
-      <img
-        src={movie.image}
-        alt={movie.title}
-        className="w-full aspect-square object-cover rounded-t-lg"
-      />
-      {isHovered && (
-        <div className="absolute bottom-0 w-full bg-black bg-opacity-80 text-white p-3 transition-opacity">
-          <h3 className="text-lg font-semibold truncate">{movie.title}</h3>
-          <p className="text-sm">{movie.synopsis}</p>
-          <p className="text-xs">Released: {movie.released}</p>
-          <p className="text-xs">Genre: {movie.genre}</p>
-          <div className="flex gap-2 mt-2">
-            <button onClick={handleFavoriteToggle} className="text-yellow-400">
-              {isFavorited ? "★" : "☆"}
-            </button>
-            <button onClick={handleWatchLaterToggle} className="text-blue-400">
-              {isWatchLater ? "🕒" : "⏳"}
-            </button>
-          </div>
+      {/* Top-right icons on hover */}
+      <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+        <button onClick={handleFavoriteToggle} className="focus:outline-none">
+          <Image
+            src={
+              isFavorited ? "/assets/starfull.svg" : "/assets/staroutline.svg"
+            }
+            alt="Favorite Icon"
+            width={24}
+            height={24}
+          />
+        </button>
+        <button onClick={handleWatchLaterToggle} className="focus:outline-none">
+          <Image
+            src={
+              isWatchLater
+                ? "/assets/clockfull.svg"
+                : "/assets/clockoutline.svg"
+            }
+            alt="Watch Later Icon"
+            width={24}
+            height={24}
+          />
+        </button>
+      </div>
+
+      {/* Movie Poster Image */}
+      <div className="w-full h-full overflow-hidden">
+        <img
+          src={movie.image}
+          alt={movie.title}
+          className="object-cover w-full h-full"
+        />
+      </div>
+
+      {/* Bottom overlay appears on hover */}
+      <div
+        className="absolute bottom-0 left-0 right-0 bg-[#080464] text-white p-4 transform translate-y-full group-hover:translate-y-0 transition-transform"
+        style={{ borderTopLeftRadius: "15px", borderTopRightRadius: "15px" }}
+      >
+        <h3 className="text-md font-semibold mb-1">
+          {movie.title} ({movie.released})
+        </h3>
+        <p className="text-sm mb-2">{movie.synopsis}</p>
+
+        {/* Genre Pill */}
+        <div className="inline-block bg-[#54F4D0] text-[#00003c] px-3 py-1 rounded-full text-md font-semibold">
+          {movie.genre}
         </div>
-      )}
+      </div>
     </div>
   );
 };
