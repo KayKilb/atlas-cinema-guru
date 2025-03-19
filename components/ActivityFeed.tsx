@@ -30,46 +30,52 @@ export default function ActivityFeed() {
   }, []);
 
   return (
-    <div className="p-4 flex justify-center items-center font-inter">
-      <div className="bg-[#54f4d0] p-4 rounded-md w-full max-w-md">
-        <h3 className="font-bold mb-2 text-center text-[#00003c]">
-          Latest Activities
-        </h3>
-        <ul className="space-y-1 text-sm text-center">
-          {activities.length > 0 ? (
-            activities.map((activity, index) => {
-              const date = new Date(activity.timestamp);
-              const formattedDate = date.toLocaleString("en-US", {
-                month: "numeric",
-                day: "numeric",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-                hour12: true,
-              });
+    <div
+      style={{
+        // Make the feed match the smaller NavBar style
+        fontSize: "12px",
+        width: "100%",
+        padding: "0.5rem",
+        color: "#00003c",
+      }}
+    >
+      <h3
+        style={{ fontWeight: "bold", marginBottom: "0.5rem", color: "#00003c" }}
+      >
+        Latest Activities
+      </h3>
+      <ul style={{ listStyle: "none", paddingLeft: 0, margin: 0 }}>
+        {activities.length > 0 ? (
+          activities.map((activity, index) => {
+            const date = new Date(activity.timestamp);
+            const formattedDate = date.toLocaleString("en-US", {
+              month: "numeric",
+              day: "numeric",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+              hour12: true,
+            });
 
-              if (activity.type === "removed") {
-                return null;
-              }
+            if (activity.type === "removed") return null;
 
-              // Determine the message
-              const message =
-                activity.type === "favorite" ? `Favorited` : `Added`;
+            // Determine the message
+            const message =
+              activity.type === "favorite" ? "Favorited" : "Added";
 
-              return (
-                <li key={index} className="text-[#00003c]">
-                  <span>{formattedDate}</span> - {message}{" "}
-                  <strong>{activity.title}</strong> to{" "}
-                  {activity.type === "favorite" ? "Favorites" : "Watch Later"}
-                </li>
-              );
-            })
-          ) : (
-            <li className="text-gray-500">No recent activities</li>
-          )}
-        </ul>
-      </div>
+            return (
+              <li key={index} style={{ marginBottom: "0.5rem" }}>
+                <span>{formattedDate}</span> - {message}{" "}
+                <strong>{activity.title}</strong> to{" "}
+                {activity.type === "favorite" ? "Favorites" : "Watch Later"}
+              </li>
+            );
+          })
+        ) : (
+          <li style={{ color: "#666" }}>No recent activities</li>
+        )}
+      </ul>
     </div>
   );
 }

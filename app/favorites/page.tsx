@@ -1,11 +1,14 @@
+// app/favorites/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 import MoviesList from "@/components/MoviesList";
 import Pagination from "@/components/Pagination";
+import { Title } from "@/lib/definitions";
 
 const Favorites = () => {
-  const [favorites, setFavorites] = useState<any[]>([]);
+  const [favorites, setFavorites] = useState<Title[]>([]);
+  const [totalFavorites, setTotalFavorites] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const moviesPerPage = 10;
 
@@ -19,7 +22,9 @@ const Favorites = () => {
           throw new Error(`Error ${response.status}: ${response.statusText}`);
         }
         const data = await response.json();
+        // Assuming your API returns an object with favorites array and total count
         setFavorites(data.favorites || []);
+        setTotalFavorites(data.total || 0);
       } catch (error) {
         console.error("Failed to fetch favorites:", error);
       }
@@ -32,24 +37,14 @@ const Favorites = () => {
     setCurrentPage(page);
   };
 
-  const handleToggleFavorite = async (id: string, favorited: boolean) => {
+  // Since the Favorites page only shows favorited movies,
+  // toggling the favorite should remove the movie.
+  const handleToggleFavorite = async (id: string) => {
     try {
-      if (favorited) {
-        const response = await fetch(`/api/favorites`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id }),
-        });
-        if (response.ok) {
-          const newFavorite = await response.json();
-          setFavorites((prevFavorites) => [...prevFavorites, newFavorite]);
-        }
-      } else {
-        await fetch(`/api/favorites/${id}`, { method: "DELETE" });
-        setFavorites((prevFavorites) =>
-          prevFavorites.filter((movie) => movie.id !== id)
-        );
-      }
+      await fetch(`/api/favorites/${id}`, { method: "DELETE" });
+      setFavorites((prevFavorites) =>
+        prevFavorites.filter((movie) => movie.id !== id)
+      );
     } catch (error) {
       console.error("Failed to toggle favorite:", error);
     }
@@ -70,7 +65,7 @@ const Favorites = () => {
       <div className="pagination-controls flex justify-center mt-8 space-x-4">
         <Pagination
           currentPage={currentPage}
-          totalMovies={favorites.length}
+          totalMovies={totalFavorites}
           onPageChange={handlePageChange}
         />
       </div>
