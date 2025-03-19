@@ -71,7 +71,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
   return (
     <div
       className="group relative bg-[#54F4D0] rounded-lg overflow-hidden shadow-md transition-transform hover:scale-105"
-      style={{ width: "250px" }} // Was 250. Adjust width to your preference
+      style={{ width: "250px" }} // Adjust width to your preference
     >
       {/* Top-right icons on hover */}
       <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
