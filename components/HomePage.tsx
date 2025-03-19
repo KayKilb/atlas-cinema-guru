@@ -12,11 +12,23 @@ const HomePage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const moviesPerPage = 10;
 
+  // Updated genres list taken from the movie data provided
   const [searchTerm, setSearchTerm] = useState("");
   const [minYear, setMinYear] = useState<number | undefined>(undefined);
   const [maxYear, setMaxYear] = useState<number | undefined>(undefined);
   const [genres, setGenres] = useState<string[]>([]);
-  const allGenres = ["Action", "Comedy", "Drama", "Horror"];
+  const allGenres = [
+    "Thriller",
+    "Drama",
+    "Sci-Fi",
+    "Mystery",
+    "Fantasy",
+    "Romance",
+    "Action",
+    "Horror",
+    "Adventure",
+    "Western",
+  ];
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -26,7 +38,6 @@ const HomePage: React.FC = () => {
         queryParams.append("page", currentPage.toString());
         queryParams.append("limit", moviesPerPage.toString());
 
-        // Add the filters if they are set
         if (minYear) queryParams.append("minYear", minYear.toString());
         if (maxYear) queryParams.append("maxYear", maxYear.toString());
         if (genres.length > 0) queryParams.append("genres", genres.join(","));
@@ -36,14 +47,14 @@ const HomePage: React.FC = () => {
           throw new Error("Network response was not ok");
         }
         const data = await response.json();
-        setPaginatedMovies(data.title); // Assuming 'data.title' is the correct path
+        setPaginatedMovies(data.title); // Assuming 'data.title' is the correct key
       } catch (error) {
         console.error("Failed to fetch movies:", error);
       }
     };
 
     fetchMovies();
-  }, [currentPage, moviesPerPage, minYear, maxYear, genres]); // Depend on the filter parameters
+  }, [currentPage, moviesPerPage, minYear, maxYear, genres]);
 
   const toggleFavorite = (id: string) => {
     setFavorites((prev) =>
@@ -73,7 +84,7 @@ const HomePage: React.FC = () => {
           setMaxYear={setMaxYear}
           genres={genres}
           setGenres={setGenres}
-          allGenres={allGenres}
+          allGenres={allGenres} // Pass the full list here
         />
         <MoviesList
           paginatedMovies={paginatedMovies}
@@ -84,7 +95,7 @@ const HomePage: React.FC = () => {
         />
         <Pagination
           currentPage={currentPage}
-          totalMovies={100} // Adjust this if your API provides the total count
+          totalMovies={100} // Adjust to your actual total if available
           onPageChange={handlePageChange}
         />
       </div>
