@@ -2,7 +2,7 @@
 import NextAuth from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 import Credentials from "next-auth/providers/credentials";
-import { fetchUser } from "@/lib/data"; // Make sure fetchUser is exported from this file
+import { fetchUser } from "@/lib/data";
 import bcrypt from "bcryptjs";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -25,16 +25,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
     Credentials({
       credentials: {
-        email: {
-          label: "Email",
-        },
-        password: {
-          label: "Password",
-          type: "password",
-        },
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" },
       },
-      authorize: async (credentials: { email: string; password: string }) => {
-        const { email, password } = credentials;
+      async authorize(
+        credentials: Partial<Record<"email" | "password", unknown>>,
+        request: Request
+      ) {
+        // Cast the unknown values to strings
+        const email = credentials?.email as string | undefined;
+        const password = credentials?.password as string | undefined;
+        if (!email || !password) return null;
         const user = await fetchUser(email);
         if (!user) return null;
         const passwordsMatch = await bcrypt.compare(password, user.password);
@@ -44,8 +45,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    authorized: async ({ auth }) => {
-      // Logged in users are authenticated; otherwise redirect to login
+    async authorized({ auth }) {
       return !!auth;
     },
   },
