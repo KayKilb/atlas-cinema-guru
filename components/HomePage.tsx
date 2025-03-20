@@ -41,6 +41,7 @@ const HomePage: React.FC = () => {
         if (minYear) queryParams.append("minYear", minYear.toString());
         if (maxYear) queryParams.append("maxYear", maxYear.toString());
         if (genres.length > 0) queryParams.append("genres", genres.join(","));
+        if (searchTerm) queryParams.append("query", searchTerm);
 
         const response = await fetch(`/api/titles?${queryParams.toString()}`);
         if (!response.ok) {
@@ -54,7 +55,7 @@ const HomePage: React.FC = () => {
     };
 
     fetchMovies();
-  }, [currentPage, moviesPerPage, minYear, maxYear, genres]);
+  }, [currentPage, moviesPerPage, minYear, maxYear, genres, searchTerm]);
 
   const toggleFavorite = (id: string) => {
     setFavorites((prev) =>
