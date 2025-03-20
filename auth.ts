@@ -1,7 +1,9 @@
-//auth.ts
+// auth.ts
 import NextAuth from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 import Credentials from "next-auth/providers/credentials";
+import { fetchUser } from "@/lib/data"; // Make sure fetchUser is exported from this file
+import bcrypt from "bcryptjs";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   theme: {
@@ -11,8 +13,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   providers: [
     GitHubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
       authorization: {
         params: {
           prompt: "consent",
@@ -31,7 +33,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           type: "password",
         },
       },
-      //@ts-ignore
       authorize: async (credentials: { email: string; password: string }) => {
         const { email, password } = credentials;
         const user = await fetchUser(email);
@@ -44,7 +45,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   callbacks: {
     authorized: async ({ auth }) => {
-      // Logged in users are authenticated, otherwise redirect to login page
+      // Logged in users are authenticated; otherwise redirect to login
       return !!auth;
     },
   },
