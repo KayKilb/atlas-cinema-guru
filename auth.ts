@@ -6,6 +6,8 @@ import { fetchUser } from "@/lib/data";
 import bcrypt from "bcryptjs";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  secret: process.env.AUTH_SECRET,
+  trustHost: true, // Trust the current host (useful in development)
   theme: {
     brandColor: "#ffffff",
     logo: "/logo.png",
@@ -46,6 +48,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   callbacks: {
     async authorized({ auth }) {
+      // Return true if a session exists (i.e., the user is authenticated)
       return !!auth;
     },
   },
